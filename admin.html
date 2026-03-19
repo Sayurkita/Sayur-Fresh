@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - TradePro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-80">
+      <h3 class="text-lg font-bold mb-4">Login Admin</h3>
+      <form id="login-form">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Password</label>
+          <input type="password" id="admin-password" class="w-full border rounded-xl px-4 py-2" required />
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" class="hidden max-w-7xl mx-auto px-4 py-10">
+    <h3 class="text-2xl font-semibold mb-6">Panel Admin - Kelola Produk dan Stok</h3>
+
+    <!-- Tabs Kategori -->
+    <div class="flex gap-4 mb-6 border-b">
+      <button onclick="switchCategory('sayur')" class="px-4 py-2 border-b-2 border-blue-500 font-semibold text-blue-500" id="tab-sayur">Sayur</button>
+      <button onclick="switchCategory('daging')" class="px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900" id="tab-daging">Daging</button>
+      <button onclick="switchCategory('ikan')" class="px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900" id="tab-ikan">Ikan</button>
+      <button onclick="switchCategory('lainnya')" class="px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900" id="tab-lainnya">Produk Lain</button>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h4 class="text-lg font-bold mb-4" id="category-title">Daftar Produk - Sayur</h4>
+      <div id="product-list" class="space-y-4">
+        <!-- Products will be loaded here -->
+      </div>
+      <button onclick="saveAllStocks()" class="bg-green-500 text-white px-6 py-3 rounded-xl mt-6">Simpan Semua Perubahan</button>
+      <button onclick="logoutAdmin()" class="bg-red-500 text-white px-6 py-3 rounded-xl mt-6 ml-4">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = '1410'; // Ganti dengan password yang diinginkan
+
+    let productData = {};
+    let isLoggedIn = false;
+    let currentCategory = 'sayur';
+
+    // Kategori produk
+    const categories = {
+      sayur: [
+        {id: 'bayam', name: 'Bayam', price: 100000, stock: 50},
+        {id: 'kangkung', name: 'Kangkung', price: 2000, stock: 60},
+        {id: 'sawi', name: 'Sawi', price: 10000, stock: 40},
+        {id: 'wortel', name: 'Wortel', price: 5000, stock: 35},
+        {id: 'tomat', name: 'Tomat', price: 150000, stock: 25},
+        {id: 'cabai', name: 'Cabai', price: 20000, stock: 45},
+        {id: 'bawang-merah', name: 'Bawang Merah', price: 50000, stock: 55},
+        {id: 'bawang-putih', name: 'Bawang Putih', price: 30000, stock: 40}
+      ],
+      daging: [
+        {id: 'ayam', name: 'Daging Ayam', price: 80000, stock: 30},
+        {id: 'sapi', name: 'Daging Sapi', price: 150000, stock: 20},
+        {id: 'kambing', name: 'Daging Kambing', price: 140000, stock: 15}
+      ],
+      ikan: [
+        {id: 'ikan-lele', name: 'Ikan Lele', price: 50000, stock: 40},
+        {id: 'ikan-nila', name: 'Ikan Nila', price: 60000, stock: 35},
+        {id: 'ikan-mujair', name: 'Ikan Mujair', price: 55000, stock: 30}
+      ],
+      lainnya: [
+        {id: 'telur', name: 'Telur Ayam', price: 25000, stock: 100},
+        {id: 'susu', name: 'Susu Segar', price: 15000, stock: 50}
+      ]
+    };
+
+    function checkLogin() {
+      const savedLogin = localStorage.getItem('adminLoggedIn');
+      if (savedLogin === 'true') {
+        isLoggedIn = true;
+        showAdminPanel();
+      } else {
+        document.getElementById('login-modal').classList.remove('hidden');
+      }
+    }
+
+    function showAdminPanel() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('admin-panel').classList.remove('hidden');
+      loadProductsByCategory('sayur');
+    }
+
+    function switchCategory(category) {
+      currentCategory = category;
+      
+      // Update tab styling
+      document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+        tab.classList.remove('border-blue-500', 'text-blue-500', 'font-semibold');
+        tab.classList.add('border-transparent', 'text-gray-600');
+      });
+      
+      document.getElementById('tab-' + category).classList.add('border-blue-500', 'text-blue-500', 'font-semibold');
+      document.getElementById('tab-' + category).classList.remove('border-transparent', 'text-gray-600');
+      
+      // Update title
+      const categoryTitles = {
+        sayur: 'Daftar Produk - Sayur',
+        daging: 'Daftar Produk - Daging',
+        ikan: 'Daftar Produk - Ikan',
+        lainnya: 'Daftar Produk - Lainnya'
+      };
+      document.getElementById('category-title').textContent = categoryTitles[category];
+      
+      loadProductsByCategory(category);
+    }
+
+    function loadProductsByCategory(category) {
+      const products = categories[category] || [];
+      const productList = document.getElementById('product-list');
+
+      productList.innerHTML = products.map(product => `
+        <div class="border rounded-lg p-4 bg-gray-50">
+          <div class="grid grid-cols-2 gap-4 items-start">
+            <div>
+              <h5 class="font-semibold text-lg">${product.name}</h5>
+              <p class="text-sm text-gray-600">ID: ${product.id}</p>
+              <p class="text-sm text-gray-600">Harga: Rp ${product.price.toLocaleString('id-ID')}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Stok Saat Ini: <span id="current-stock-${product.id}" class="font-bold">${product.stock}</span></label>
+              <input type="number" id="stock-input-${product.id}" value="${product.stock}" min="0" class="w-full border rounded px-3 py-1" />
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveAllStocks() {
+      const products = categories[currentCategory] || [];
+      
+      products.forEach(product => {
+        const input = document.getElementById('stock-input-' + product.id);
+        if (input) {
+          const newStock = parseInt(input.value, 10);
+          if (!isNaN(newStock) && newStock >= 0) {
+            product.stock = newStock;
+            document.getElementById('current-stock-' + product.id).textContent = newStock;
+          }
+        }
+      });
+      
+      // Save to localStorage
+      localStorage.setItem('productCategories', JSON.stringify(categories));
+      alert('Stok berhasil diperbarui!');
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('adminLoggedIn');
+      isLoggedIn = false;
+      document.getElementById('admin-panel').classList.add('hidden');
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const password = document.getElementById('admin-password').value;
+      if (password === ADMIN_PASSWORD) {
+        localStorage.setItem('adminLoggedIn', 'true');
+        isLoggedIn = true;
+        showAdminPanel();
+      } else {
+        alert('Password salah!');
+      }
+    });
+
+    window.onload = checkLogin;
+  </script>
+
+</body>
+</html>

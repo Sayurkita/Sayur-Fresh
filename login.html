@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - TradePro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-6">Sign Up</h2>
+    <form id="signup-form">
+      <div class="mb-4">
+        <label for="name" class="block text-sm font-medium text-gray-700">Nama</label>
+        <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div class="mb-4">
+        <label for="wa" class="block text-sm font-medium text-gray-700">Nomor WhatsApp</label>
+        <input type="tel" id="wa" name="wa" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" name="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Sign Up
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const wa = document.getElementById('wa').value;
+      const password = document.getElementById('password').value;
+      
+      // Kata-kata yang diblokir
+      const blockedWords = ['admin', 'owner', 'developer'];
+      const lowerName = name.toLowerCase();
+      
+      // Cek apakah nama mengandung kata yang diblokir
+      const hasBlockedWord = blockedWords.some(word => lowerName.includes(word));
+      
+      if (hasBlockedWord) {
+        alert('Nama tidak dapat mengandung kata: ' + blockedWords.join(', '));
+        return;
+      }
+      
+      if (name && wa && password) {
+        localStorage.setItem('user', name);
+        localStorage.setItem('wa', wa);
+        window.location.href = 'welcome.html';
+      }
+    });
+  </script>
+
+</body>
+</html>

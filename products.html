@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produk - TradePro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-sm sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">TradePro</h1>
+
+      <div class="w-1/2">
+        <input type="text" id="search-input" placeholder="Cari produk..." class="w-full border rounded-xl px-4 py-2" />
+      </div>
+
+      <div class="flex gap-4 items-center">
+        <span onclick="showProfile()" class="cursor-pointer">👤</span>
+        <span id="user-name" class="text-sm"></span>
+        <span id="user-wa" class="text-sm text-gray-600"></span>
+        <span id="cart-icon" onclick="openCart()" class="cursor-pointer">🛒</span>
+        <button onclick="toggleFavoritesFilter()" id="favorite-filter-btn" class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200">Favorit</button>
+        <button onclick="goHome()" class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200">Home</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-80">
+      <h3 class="text-lg font-bold mb-4">Profil Pengguna</h3>
+      <p>Nama: <span id="profile-name"></span></p>
+      <p>WhatsApp: <span id="profile-wa"></span></p>
+      <button onclick="logout()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+      <button onclick="closeProfile()" class="mt-4 ml-2 bg-gray-500 text-white px-4 py-2 rounded">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <section class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex justify-center mb-6">
+      <button id="tab-sayur" onclick="showTab('sayur')" class="px-6 py-2 bg-green-500 text-white rounded-l-xl">Sayur-Sayuran</button>
+      <button id="tab-daging" onclick="showTab('daging')" class="px-6 py-2 bg-blue-500 text-white">Daging & Ikan</button>
+      <button id="tab-lain" onclick="showTab('lain')" class="px-6 py-2 bg-yellow-500 text-white rounded-r-xl">Produk Lain</button>
+    </div>
+
+    <!-- Sayur Content -->
+    <div id="content-sayur" class="tab-content">
+      <h3 class="text-2xl font-semibold mb-6">Sayur Terbaru</h3>
+      <div id="product-grid-sayur" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Produk Sayur -->
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview1" src="ckp tw.jpeg" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview1')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Bayam</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 100.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty1')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display1" class="px-2">1</span>
+              <button onclick="increaseQty('qty1')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty1" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty1')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview2" src="dayat.jpeg" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview2')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Kangkung</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 2.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty2')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display2" class="px-2">1</span>
+              <button onclick="increaseQty('qty2')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty2" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty2')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview3" src="pler.jpeg" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview3')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Sawi</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 10.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty3')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display3" class="px-2">1</span>
+              <button onclick="increaseQty('qty3')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty3" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty3')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview4" src="plenger.jpeg" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview4')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Wortel</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 5.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty4')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display4" class="px-2">1</span>
+              <button onclick="increaseQty('qty4')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty4" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty4')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview5" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview5')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Tomat</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 150.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty5')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display5" class="px-2">1</span>
+              <button onclick="increaseQty('qty5')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty5" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty5')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview6" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview6')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Brokoli</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 20.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty6')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display6" class="px-2">1</span>
+              <button onclick="increaseQty('qty6')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty6" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty6')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview7" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview7')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Kol</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 8.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty7')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display7" class="px-2">1</span>
+              <button onclick="increaseQty('qty7')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty7" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty7')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview8" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview8')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Timun</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 3.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty8')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display8" class="px-2">1</span>
+              <button onclick="increaseQty('qty8')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty8" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty8')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daging Content -->
+    <div id="content-daging" class="tab-content hidden">
+      <h3 class="text-2xl font-semibold mb-6">Daging & Ikan Terbaru</h3>
+      <div id="product-grid-daging" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Produk Daging & Ikan -->
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview9" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview9')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ayam Potong</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 200.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty9')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display9" class="px-2">1</span>
+              <button onclick="increaseQty('qty9')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty9" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty9')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview10" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview10')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ikan Tuna</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 25.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty10')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display10" class="px-2">1</span>
+              <button onclick="increaseQty('qty10')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty10" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty10')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview11" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview11')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ayam Fillet</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 30.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty11')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display11" class="px-2">1</span>
+              <button onclick="increaseQty('qty11')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty11" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty11')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview12" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview12')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ikan Salmon</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 50.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty12')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display12" class="px-2">1</span>
+              <button onclick="increaseQty('qty12')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty12" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty12')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview13" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview13')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Daging Sapi</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 150.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty13')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display13" class="px-2">1</span>
+              <button onclick="increaseQty('qty13')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty13" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty13')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview14" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview14')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ikan Lele</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 15.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty14')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display14" class="px-2">1</span>
+              <button onclick="increaseQty('qty14')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty14" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty14')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview15" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview15')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ayam Utuh</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 180.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty15')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display15" class="px-2">1</span>
+              <button onclick="increaseQty('qty15')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty15" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty15')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview16" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview16')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Ikan Bandeng</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 20.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty16')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display16" class="px-2">1</span>
+              <button onclick="increaseQty('qty16')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty16" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty16')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lain Content -->
+    <div id="content-lain" class="tab-content hidden">
+      <h3 class="text-2xl font-semibold mb-6">Produk Lain Terbaru</h3>
+      <div id="product-grid-lain" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Produk Lain -->
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview17" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview17')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Beras</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 50.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty17')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display17" class="px-2">1</span>
+              <button onclick="increaseQty('qty17')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty17" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty17')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview18" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview18')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Minyak Goreng</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 25.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty18')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display18" class="px-2">1</span>
+              <button onclick="increaseQty('qty18')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty18" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty18')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview19" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview19')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Gula</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 15.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty19')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display19" class="px-2">1</span>
+              <button onclick="increaseQty('qty19')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty19" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty19')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview20" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview20')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Telur</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 20.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty20')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display20" class="px-2">1</span>
+              <button onclick="increaseQty('qty20')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty20" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty20')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview21" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview21')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Susu</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 12.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty21')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display21" class="px-2">1</span>
+              <button onclick="increaseQty('qty21')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty21" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty21')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview22" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview22')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Kopi</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 30.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty22')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display22" class="px-2">1</span>
+              <button onclick="increaseQty('qty22')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty22" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty22')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview23" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview23')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Teh</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 10.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty23')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display23" class="px-2">1</span>
+              <button onclick="increaseQty('qty23')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty23" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty23')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+          <img id="preview24" src="https://via.placeholder.com/300" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview24')" class="hidden" />
+          </label>
+          <h4 class="font-semibold">Roti</h4>
+          <p class="text-gray-500 text-sm">Deskripsi produk</p>
+          <p class="font-bold mt-2">Rp 5.000</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty24')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display24" class="px-2">1</span>
+              <button onclick="increaseQty('qty24')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty24" type="hidden" value="1">
+            </div>
+            <button onclick="addToCart(this, 'qty24')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Cek login
+    if (!localStorage.getItem('user')) {
+      window.location.href = 'login.html';
+    }
+
+    // Load user data & initialize product state
+    const defaultProductData = {
+      // Sayur
+      'sayur-1': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-2': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-3': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-4': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-5': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-6': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-7': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'sayur-8': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      // Daging & Ikan
+      'daging-1': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-2': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-3': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-4': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-5': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-6': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-7': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'daging-8': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      // Produk Lain
+      'lain-1': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-2': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-3': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-4': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-5': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-6': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-7': { stock: 20, rating: 0, ratingCount: 0, favorite: false },
+      'lain-8': { stock: 20, rating: 0, ratingCount: 0, favorite: false }
+    };
+
+    let productData = JSON.parse(localStorage.getItem('productData') || 'null');
+    if (!productData) {
+      productData = defaultProductData;
+      localStorage.setItem('productData', JSON.stringify(productData));
+    }
+
+    let showFavoritesOnly = false;
+
+    function updateProductDisplay(productId) {
+      const data = productData[productId];
+      if (!data) return;
+      const stockEl = document.getElementById(`stock-${productId}`);
+      const ratingEl = document.getElementById(`rating-${productId}`);
+      const favBtn = document.getElementById(`fav-${productId}`);
+      const addBtn = document.getElementById(`addbtn-${productId}`);
+      if (stockEl) stockEl.textContent = data.stock;
+      if (ratingEl) ratingEl.textContent = data.rating.toFixed(1);
+      if (favBtn) favBtn.textContent = data.favorite ? '❤️' : '🤍';
+      if (addBtn) addBtn.disabled = data.stock <= 0;
+    }
+
+    function filterProducts() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      const activeTab = document.querySelector('.tab-content:not(.hidden)');
+      if (!activeTab) return;
+      const cards = activeTab.querySelectorAll('.product-card');
+      cards.forEach(card => {
+        const productName = card.getAttribute('data-name');
+        const id = card.getAttribute('data-id');
+        const matchesSearch = productName.includes(searchTerm);
+        const isFavorite = productData[id] ? productData[id].favorite : false;
+        const shouldShow = matchesSearch && (!showFavoritesOnly || isFavorite);
+        card.style.display = shouldShow ? 'block' : 'none';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const userName = localStorage.getItem('user');
+      const userWa = localStorage.getItem('wa');
+      if (userName) {
+        document.getElementById('user-name').textContent = userName;
+      }
+      if (userWa) {
+        document.getElementById('user-wa').textContent = userWa;
+      }
+      // Default tab
+      showTab('sayur');
+
+      document.getElementById('search-input').addEventListener('input', filterProducts);
+
+      Object.keys(productData).forEach(updateProductDisplay);
+      filterProducts();
+    });
+
+    function showTab(tab) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      // Show selected
+      document.getElementById('content-' + tab).classList.remove('hidden');
+      // Update button styles
+      document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.classList.remove('bg-opacity-75'));
+      document.getElementById('tab-' + tab).classList.add('bg-opacity-75');
+      filterProducts();
+    }
+
+    function toggleFavorite(productId) {
+      const data = productData[productId];
+      if (!data) return;
+      data.favorite = !data.favorite;
+      localStorage.setItem('productData', JSON.stringify(productData));
+      updateProductDisplay(productId);
+      filterProducts();
+    }
+
+    function showProfile() {
+      const userName = localStorage.getItem('user');
+      const userWa = localStorage.getItem('wa');
+      document.getElementById('profile-name').textContent = userName || '';
+      document.getElementById('profile-wa').textContent = userWa || '';
+      document.getElementById('profile-modal').classList.remove('hidden');
+    }
+
+    function closeProfile() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    function toggleFavoritesFilter() {
+      showFavoritesOnly = !showFavoritesOnly;
+      const btn = document.getElementById('favorite-filter-btn');
+      if (btn) btn.classList.toggle('bg-yellow-200', showFavoritesOnly);
+      filterProducts();
+    }
+
+    function logout() {
+      localStorage.removeItem('user');
+      localStorage.removeItem('wa');
+      window.location.href = 'login.html';
+    }
+
+    function openCart() {
+      window.open('cart.html', '_blank');
+    }
+
+    function goHome() {
+      window.location.href = 'welcome.html';
+    }
+
+    function openImage(url) {
+      window.open(url, '_blank');
+    }
+
+    function loadImage(event, previewId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(previewId).src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function addToCart(button, qtyId) {
+      const qty = parseInt(document.getElementById(qtyId).value);
+      const card = button.closest('.product-card');
+      const productId = card.getAttribute('data-id');
+      const productName = card.getAttribute('data-name');
+      const priceText = card.querySelector('p.font-bold').textContent;
+      const imgSrc = card.querySelector('img').src;
+
+      const data = productData[productId];
+      if (!data) return;
+      if (data.stock < qty) {
+        alert('Stok tidak cukup. Kurangi jumlah atau pilih produk lain.');
+        return;
+      }
+
+      // Simpan ke keranjang dengan referensi id
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.push({ id: productId, name: productName, price: priceText, qty: qty, img: imgSrc });
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      alert('Produk ditambahkan ke keranjang!');
+    }
+
+    function increaseQty(qtyId) {
+      const qtyInput = document.getElementById(qtyId);
+      const display = document.getElementById('qty-display' + qtyId.slice(3));
+      let qty = parseInt(qtyInput.value);
+      qty++;
+      qtyInput.value = qty;
+      display.textContent = qty;
+    }
+
+    function decreaseQty(qtyId) {
+      const qtyInput = document.getElementById(qtyId);
+      const display = document.getElementById('qty-display' + qtyId.slice(3));
+      let qty = parseInt(qtyInput.value);
+      if (qty > 1) {
+        qty--;
+        qtyInput.value = qty;
+        display.textContent = qty;
+      }
+    }
+
+    // Fungsi pencarian
+    document.getElementById('search-input').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const activeTab = document.querySelector('.tab-content:not(.hidden)');
+      const cards = activeTab.querySelectorAll('.product-card');
+      cards.forEach(card => {
+        const productName = card.getAttribute('data-name');
+        card.style.display = productName.includes(searchTerm) ? 'block' : 'none';
+      });
+    });
+
+    // Tambahkan produk secara dinamis (agar tiap kategori bisa sampai 20 item)
+    const extraSayur = [
+      { name: 'Wortel Organik', desc: 'Sayur segar dari kebun organik', price: 'Rp 7.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Selada', desc: 'Selada renyah untuk salad sehat', price: 'Rp 6.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Bawang Daun', desc: 'Aroma segar untuk masakan', price: 'Rp 4.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Kacang Panjang', desc: 'Kacang panjang segar', price: 'Rp 5.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Sawi Hijau', desc: 'Sawi hijau pilihan', price: 'Rp 9.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Bayam Merah', desc: 'Bayam merah penuh nutrisi', price: 'Rp 8.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Terong', desc: 'Terong ungu segar', price: 'Rp 10.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Paprika', desc: 'Paprika manis pilihan', price: 'Rp 12.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Cabai Merah', desc: 'Cabai pedas segar', price: 'Rp 15.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Tomat Cherry', desc: 'Tomat kecil manis', price: 'Rp 14.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Jagung Manis', desc: 'Jagung manis segar', price: 'Rp 16.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Tauge', desc: 'Tauge segar untuk tumisan', price: 'Rp 6.500', img: 'https://via.placeholder.com/300' }
+    ];
+
+    const extraDaging = [
+      { name: 'Ikan Kakap', desc: 'Ikan kakap segar', price: 'Rp 40.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Daging Sapi Has', desc: 'Daging sapi berkualitas', price: 'Rp 160.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Daging Kambing', desc: 'Kambing segar untuk rendang', price: 'Rp 145.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Ikan Lele', desc: 'Ikan lele segar', price: 'Rp 20.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Udang', desc: 'Udang segar', price: 'Rp 55.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Ikan Nila', desc: 'Ikan nila berkualitas', price: 'Rp 35.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Ayam Kampung', desc: 'Ayam kampung segar', price: 'Rp 85.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Daging Ayam Fillet', desc: 'Fillet ayam praktis', price: 'Rp 75.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Ikan Bandeng', desc: 'Bandeng segar', price: 'Rp 22.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Ikan Tongkol', desc: 'Tongkol segar', price: 'Rp 28.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Daging Sapi Giling', desc: 'Daging sapi giling segar', price: 'Rp 120.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Daging Ayam Cincang', desc: 'Ayam cincang segar', price: 'Rp 65.000', img: 'https://via.placeholder.com/300' }
+    ];
+
+    const extraLain = [
+      { name: 'Beras Premium', desc: 'Beras kualitas tinggi', price: 'Rp 55.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Minyak Goreng 1L', desc: 'Minyak goreng bermutu', price: 'Rp 24.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Telur Ayam', desc: 'Telur ayam fresh', price: 'Rp 22.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Gula Pasir', desc: 'Gula pasir murni', price: 'Rp 15.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Susu UHT', desc: 'Susu UHT segar', price: 'Rp 12.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Roti Tawar', desc: 'Roti tawar lembut', price: 'Rp 10.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Kopi Bubuk', desc: 'Kopi bubuk pilihan', price: 'Rp 30.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Teh Celup', desc: 'Teh celup harum', price: 'Rp 18.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Mie Instan', desc: 'Mie instan favorit', price: 'Rp 6.500', img: 'https://via.placeholder.com/300' },
+      { name: 'Kecap Manis', desc: 'Kecap manis lengkap rasa', price: 'Rp 12.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Saus Tomat', desc: 'Saus tomat serbaguna', price: 'Rp 14.000', img: 'https://via.placeholder.com/300' },
+      { name: 'Bumbu Instan', desc: 'Bumbu praktis untuk masakan', price: 'Rp 11.000', img: 'https://via.placeholder.com/300' }
+    ];
+
+    function createProductCard(category, item, idx) {
+      const id = `${category}-${idx}`;
+      if (!productData[id]) {
+        productData[id] = { stock: 20, rating: 0, ratingCount: 0, favorite: false };
+        localStorage.setItem('productData', JSON.stringify(productData));
+      }
+      const data = productData[id];
+      return `
+        <div class="product-card bg-white rounded-2xl shadow p-4 hover:shadow-lg transition" data-name="${item.name.toLowerCase()}" data-id="${id}">
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="font-semibold">${item.name}</h4>
+            <button id="fav-${id}" onclick="toggleFavorite('${id}')" class="text-xl">${data.favorite ? '❤️' : '🤍'}</button>
+          </div>
+          <img id="preview-${id}" src="${item.img}" class="h-40 w-full object-cover rounded-xl mb-4 cursor-pointer" onclick="openImage(this.src)" />
+          <label class="block mb-2">
+            <span class="inline-block bg-gray-200 px-3 py-1 rounded cursor-pointer text-sm">Unggah Gambar</span>
+            <input type="file" accept="image/*" onchange="loadImage(event, 'preview-${id}')" class="hidden" />
+          </label>
+          <p class="text-gray-500 text-sm mb-1">${item.desc}</p>
+          <p class="font-bold">${item.price}</p>
+          <p class="text-sm text-gray-600">Stok: <span id="stock-${id}">${data.stock}</span></p>
+          <p class="text-sm text-yellow-500">Rating: <span id="rating-${id}">${data.rating.toFixed(1)}</span> ★</p>
+          <div class="flex gap-2 mt-3 items-center">
+            <div class="flex items-center gap-2">
+              <button onclick="decreaseQty('qty-${id}')" class="px-2 py-1 border rounded">-</button>
+              <span id="qty-display-${id}" class="px-2">1</span>
+              <button onclick="increaseQty('qty-${id}')" class="px-2 py-1 border rounded">+</button>
+              <input id="qty-${id}" type="hidden" value="1">
+            </div>
+            <button id="addbtn-${id}" onclick="addToCart(this, 'qty-${id}')" class="flex-1 bg-black text-white py-2 rounded-xl">Tambah ke Keranjang</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function appendProducts(category, products, startIndex) {
+      const container = document.getElementById(`product-grid-${category}`);
+      products.forEach((item, idx) => {
+        container.insertAdjacentHTML('beforeend', createProductCard(category, item, startIndex + idx));
+      });
+    }
+
+    // Tambahkan produk tambahan agar total setiap kategori mencapai 20 item
+    document.addEventListener('DOMContentLoaded', function() {
+      appendProducts('sayur', extraSayur, 9);
+      appendProducts('daging', extraDaging, 9);
+      appendProducts('lain', extraLain, 9);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - TradePro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-sm sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">TradePro</h1>
+
+      <div class="w-1/2">
+        <input type="text" placeholder="Cari produk..." class="w-full border rounded-xl px-4 py-2" />
+      </div>
+
+      <div class="flex gap-4 items-center">
+        <span onclick="showProfile()" class="cursor-pointer">👤</span>
+        <span id="user-name" class="text-sm"></span>
+        <span id="user-wa" class="text-sm text-gray-600"></span>
+        <span id="cart-icon" onclick="openCart()" class="cursor-pointer">🛒</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-80">
+      <h3 class="text-lg font-bold mb-4">Profil Pengguna</h3>
+      <p>Nama: <span id="profile-name"></span></p>
+      <p>WhatsApp: <span id="profile-wa"></span></p>
+      <button onclick="logout()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+      <button onclick="closeProfile()" class="mt-4 ml-2 bg-gray-500 text-white px-4 py-2 rounded">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Checkout Section -->
+  <section class="max-w-4xl mx-auto px-4 py-10">
+    <h3 class="text-2xl font-semibold mb-6">Konfirmasi Checkout</h3>
+
+    <!-- Order Summary -->
+    <div class="bg-white rounded-2xl shadow p-6 mb-6">
+      <h4 class="text-lg font-bold mb-4">Ringkasan Pesanan</h4>
+      <div id="order-summary" class="space-y-4">
+        <!-- Items will be loaded here -->
+      </div>
+      <div class="border-t pt-4 mt-4">
+        <p class="text-lg font-bold">Total: <span id="total-price">Rp 0</span></p>
+      </div>
+    </div>
+
+    <!-- Delivery Form -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h4 class="text-lg font-bold mb-4">Informasi Pengiriman</h4>
+      <form id="checkout-form">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Nama Lengkap</label>
+          <input type="text" id="full-name" class="w-full border rounded-xl px-4 py-2" required />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Nomor WhatsApp</label>
+          <input type="tel" id="wa-number" class="w-full border rounded-xl px-4 py-2" required />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Alamat Lengkap</label>
+          <textarea id="address" rows="4" class="w-full border rounded-xl px-4 py-2" placeholder="Masukkan alamat lengkap pengiriman" required></textarea>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Catatan Tambahan (Opsional)</label>
+          <textarea id="notes" rows="2" class="w-full border rounded-xl px-4 py-2" placeholder="Catatan untuk penjual"></textarea>
+        </div>
+        <button type="submit" class="bg-green-500 text-white px-6 py-3 rounded-xl w-full font-semibold">Konfirmasi Pembelian</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    if (!localStorage.getItem('user')) {
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('user-name').textContent = localStorage.getItem('user') || '';
+    document.getElementById('user-wa').textContent = localStorage.getItem('wa') || '';
+
+    function loadCheckout() {
+      const checkoutCart = JSON.parse(localStorage.getItem('checkoutCart') || '[]');
+      if (checkoutCart.length === 0) {
+        alert('Tidak ada item untuk checkout.');
+        window.location.href = 'cart.html';
+        return;
+      }
+
+      const orderSummary = document.getElementById('order-summary');
+      let total = 0;
+
+      orderSummary.innerHTML = checkoutCart.map((item, index) => {
+        const qty = item.qty || 1;
+        const priceValue = parseInt(String(item.price).replace(/\D/g, ''), 10) || 0;
+        const subtotal = qty * priceValue;
+        total += subtotal;
+        return `
+          <div class="flex items-center gap-4">
+            <img src="${item.img}" class="h-16 w-16 object-cover rounded-xl" />
+            <div class="flex-1">
+              <h5 class="font-semibold">${item.name}</h5>
+              <p class="text-sm text-gray-500">Jumlah: ${qty}</p>
+              <p class="font-bold">Rp ${subtotal.toLocaleString()}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('total-price').textContent = `Rp ${total.toLocaleString()}`;
+
+      // Pre-fill form
+      document.getElementById('full-name').value = localStorage.getItem('user') || '';
+      document.getElementById('wa-number').value = localStorage.getItem('wa') || '';
+    }
+
+    function confirmPurchase() {
+      const checkoutCart = JSON.parse(localStorage.getItem('checkoutCart') || '[]');
+      const productData = JSON.parse(localStorage.getItem('productData') || '{}');
+
+      // Validasi stok
+      for (const item of checkoutCart) {
+        const product = productData[item.id];
+        const qty = item.qty || 1;
+        if (!product || product.stock < qty) {
+          alert(`Stok tidak cukup untuk produk ${item.name}. Silakan kembali ke keranjang.`);
+          return;
+        }
+      }
+
+      // Kurangi stok
+      Object.entries(checkoutCart.reduce((acc, item) => {
+        const qty = item.qty || 1;
+        acc[item.id] = (acc[item.id] || 0) + qty;
+        return acc;
+      }, {})).forEach(([id, qty]) => {
+        if (productData[id]) {
+          productData[id].stock = Math.max(0, productData[id].stock - qty);
+        }
+      });
+
+      localStorage.setItem('productData', JSON.stringify(productData));
+
+      // Minta rating per produk unik
+      const rated = new Set();
+      checkoutCart.forEach(item => {
+        if (rated.has(item.id)) return;
+        rated.add(item.id);
+        const ratingStr = prompt(`Terima kasih telah membeli ${item.name}! Berikan penilaian dari 1-5:`, '5');
+        const rating = parseFloat(ratingStr);
+        if (!isNaN(rating) && rating >= 1 && rating <= 5) {
+          const product = productData[item.id];
+          product.ratingCount = (product.ratingCount || 0) + 1;
+          product.rating = ((product.rating || 0) * (product.ratingCount - 1) + rating) / product.ratingCount;
+        }
+      });
+
+      localStorage.setItem('productData', JSON.stringify(productData));
+      localStorage.removeItem('checkoutCart');
+      localStorage.removeItem('cart');
+
+      alert('Terima kasih! Pesanan Anda berhasil diproses.');
+      window.location.href = 'welcome.html';
+    }
+
+    document.getElementById('checkout-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      confirmPurchase();
+    });
+
+    function showProfile() {
+      document.getElementById('profile-name').textContent = localStorage.getItem('user');
+      document.getElementById('profile-wa').textContent = localStorage.getItem('wa');
+      document.getElementById('profile-modal').classList.remove('hidden');
+    }
+
+    function closeProfile() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    function openCart() {
+      window.open('cart.html', '_blank');
+    }
+
+    window.onload = loadCheckout;
+  </script>
+
+</body>
+</html>
