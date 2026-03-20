@@ -55,6 +55,59 @@
       }
     });
   </script>
+    <!-- ... akhir dari kode form kamu ... -->
+    </div> 
+
+    <!-- TEMPAT JAVASCRIPT DISATUKAN -->
+    <script type="module">
+      // Import Firebase SDK (harus di paling atas script)
+      import { initializeApp } from "https://www.gstatic.com";
+      import { getFirestore, collection, addDoc } from "https://www.gstatic.com";
+
+      // Konfigurasi Firebase kamu
+      const firebaseConfig = {
+       apiKey: "AIzaSyAD4HoOIgCj8FfxSygnMldIUlZ9tAQqnPs",
+    authDomain: "sayur-kita2.firebaseapp.com",
+    projectId: "sayur-kita2",
+    storageBucket: "sayur-kita2.firebasestorage.app",
+    messagingSenderId: "336617795993",
+    appId: "1:336617795993:web:594bf59409bb51984ca308",
+    measurementId: "G-VW0WE8471E"
+      };
+
+      // Inisialisasi
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Ambil elemen form
+      const signupForm = document.getElementById('signup-form');
+
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Biar halaman nggak refresh
+
+        // Ambil data dari ID yang ada di inputmu (name, wa, password)
+        const namaUser = document.getElementById('name').value;
+        const waUser = document.getElementById('wa').value;
+        const passUser = document.getElementById('password').value;
+
+        try {
+          await addDoc(collection(db, "users"), {
+            nama: namaUser,
+            whatsapp: waUser,
+            password: passUser,
+            waktu_daftar: new Date()
+          });
+          alert("Data Berhasil Disimpan ke Firebase!");
+          // Opsional: pindah halaman setelah berhasil
+          // window.location.href = "index.html"; 
+        } catch (error) {
+          console.error("Error: ", error);
+          alert("Gagal daftar: " + error.message);
+        }
+      });
+    </script>
+  </body> <!-- Ini tag penutup file HTML kamu -->
+</html>
 
 </body>
 </html>
