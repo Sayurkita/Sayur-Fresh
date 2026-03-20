@@ -515,6 +515,47 @@
       <button onclick="closeProfile()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Tutup</button>
     </div>
   </div>
+<script type="module">
+  // Impor fungsi yang dibutuhkan dari Firebase SDK
+  import { initializeApp } from "https://www.gstatic.com";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com";
+
+  // Konfigurasi Firebase milikmu
+  const firebaseConfig = {
+     apiKey: "AIzaSyAD4HoOIgCj8FfxSygnMldIUlZ9tAQqnPs",
+    authDomain: "sayur-kita2.firebaseapp.com",
+    projectId: "sayur-kita2",
+    storageBucket: "sayur-kita2.firebasestorage.app",
+    messagingSenderId: "336617795993",
+    appId: "1:336617795993:web:594bf59409bb51984ca308",
+    measurementId: "G-VW0WE8471E"
+  };
+
+  // Inisialisasi Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Logika saat tombol diklik
+  document.getElementById('btnSignUp').addEventListener('click', async () => {
+    const namaUser = document.getElementById('nama').value;
+    const waUser = document.getElementById('whatsapp').value;
+    const passUser = document.getElementById('password').value;
+
+    try {
+      // Simpan data ke koleksi bernama "users" di Firestore
+      await addDoc(collection(db, "users"), {
+        nama: namaUser,
+        whatsapp: waUser,
+        password: passUser, // Catatan: Untuk produksi, password harus di-enkripsi!
+        waktu_daftar: new Date()
+      });
+      alert("Pendaftaran Berhasil!");
+    } catch (e) {
+      console.error("Error menambah dokumen: ", e);
+      alert("Gagal mendaftar, coba lagi.");
+    }
+  });
+</script>
 
 </body>
 </html>
